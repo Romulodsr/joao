@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind Component Example</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
+
+    <style>
+        .text-custom-color {
+            color: #099d9d;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .indicator {
+            position: absolute;
+            width: 250px;
+            height: 320px;
+            border: 8px solid red;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex flex-wrap">
+        <div class="w-full sm:w-8/12 mb-10">
+            <div class="container mx-auto h-full sm:p-10">
+                <nav class="flex px-4 justify-between items-center">
+                    <div class="text-4xl font-bold">
+                        SmartMed<span class="text-custom-color">.</span>
+                    </div>
+                    <div>
+                        <img src="https://image.flaticon.com/icons/svg/497/497348.svg" alt="" class="w-8">
+                    </div>
+                </nav>
+                <header class="container px-4 lg:flex mt-10 items-center h-full lg:mt-0">
+                  
+                    
+                    <!-- Video Container -->
+                    <div class="relative">
+                        <h1 class="text-2xl font-bold mb-4">Reconhecimento Facial</h1>
+                        <video id="video" autoplay playsinline class="rounded-lg shadow-lg"></video>
+                        <canvas id="canvas"></canvas>
+                        <div id="indicator" class="indicator"></div>
+                         <p id="countdown" class="mt-4 text-xl font-bold"></p>
+                    </div>
+               
+
+                   
+
+                    <script>
+                        const video = document.getElementById("video");
+                        const canvas = document.getElementById("canvas");
+                        const ctx = canvas.getContext("2d");
+                        const indicator = document.getElementById("indicator");
+                        const countdownEl = document.getElementById("countdown");
+                        let model, countdown, isRecording = false;
+
+                        async function startCamera() {
+                            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                            video.srcObject = stream;
+                            video.onloadedmetadata = () => {
+                                video.play();
+                                adjustCanvasSize();
+                                loadModel();
+                            };
+                        }
+
+                        function adjustCanvasSize() {
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                        }
+
+                        async function loadModel() {
+                            model = await facemesh.load();
+                            detectFace();
+                        }
+
+                        async function detectFace() {
+                            const predictions = await model.estimateFaces(video);
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            if (predictions.length > 0) {
+                                const keypoints = predictions[0].scaledMesh;
+                                const nose = keypoints[0];
+
+                                const centerX = canvas.width / 2;
+                                const centerY = canvas.height / 2;
+                                const radiusX = 75, radiusY = 100;
+                                const insideFace = Math.abs(nose[0] - centerX) < radiusX && Math.abs(nose[1] - centerY) < radiusY;
+
+                                indicator.style.borderColor = insideFace ? "#00ff00" : "red";
+
+                                if (insideFace && !isRecording) {
+                                    startCountdown();
+                                } else if (!insideFace) {
+                                    stopCountdown();
+                                }
+                            }
+                            requestAnimationFrame(detectFace);
+                        }
+
+                        function startCountdown() {
+                            if (!countdown) {
+                                let timeLeft = 15;
+                                isRecording = true;
+                                countdownEl.innerText = `Gravando em: ${timeLeft}s`;
+                                countdown = setInterval(() => {
+                                    timeLeft--;
+                                    countdownEl.innerText = `Gravando em: ${timeLeft}s`;
+                                    if (timeLeft <= 0) {
+                                        clearInterval(countdown);
+                                        countdownEl.innerText = "✅ Gravacao Finalizada!";
+                                        isRecording = false;
+                                        submitAndRedirect();
+                                    }
+                                }, 1000);
+                            }
+                        }
+
+                        function submitAndRedirect() {
+                            const params = new URLSearchParams(window.location.search);
+                            window.location.href = `results.html?${params.toString()}`;
+                        }
+
+                        function stopCountdown() {
+                            clearInterval(countdown);
+                            countdown = null;
+                            countdownEl.innerText = "";
+                            isRecording = false;
+                        }
+
+                        startCamera();
+                    </script>
+                </header>
+            </div>
+        </div>
+        <img src="background.jpg" alt="Leafs" class="w-full h-48 object-cover sm:h-screen sm:w-4/12">
+    </div>
+</body>
+
+</html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .indicator {
+            position: absolute;
+            width: 250px;
+            height: 320px;
+            border: 8px solid red;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+    <h1 class="text-2xl font-bold mb-4">Reconhecimento Facial</h1>
+    <div class="relative">
+        <video id="video" autoplay playsinline class="rounded-lg shadow-lg"></video>
+        <canvas id="canvas"></canvas>
+        <div id="indicator" class="indicator"></div>
+    </div>
+    <p id="countdown" class="mt-4 text-xl font-bold"></p>
+    
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const indicator = document.getElementById("indicator");
+        const countdownEl = document.getElementById("countdown");
+        let model, countdown, isRecording = false;
+
+        async function startCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            video.onloadedmetadata = () => {
+                video.play();
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                loadModel();
+            };
+        }
+
+        async function loadModel() {
+            model = await facemesh.load();
+            detectFace();
+        }
+
+        async function detectFace() {
+            const predictions = await model.estimateFaces(video);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (predictions.length > 0) {
+                const keypoints = predictions[0].scaledMesh;
+                const nose = keypoints[0];
+                
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radiusX = 75, radiusY = 100;
+                const insideFace = Math.abs(nose[0] - centerX) < radiusX && Math.abs(nose[1] - centerY) < radiusY;
+                
+                indicator.style.borderColor = insideFace ? "#00ff00" : "red";
+                
+                if (insideFace && !isRecording) {
+                    startCountdown();
+                } else if (!insideFace) {
+                    stopCountdown();
+                }
+            }
+            requestAnimationFrame(detectFace);
+        }
+
+        function startCountdown() {
+            if (!countdown) {
+                let timeLeft = 15;
+                isRecording = true;
+                countdownEl.innerText = `Recording in: ${timeLeft}s`;
+                countdown = setInterval(() => {
+                    timeLeft--;
+                    countdownEl.innerText = `Recording in: ${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        countdownEl.innerText = "✅ Face Recorded!";
+                        isRecording = false;
+                        submitAndRedirect();
+                    }
+                }, 1000);
+            }
+        }
+
+        function submitAndRedirect() {
+            const params = new URLSearchParams(window.location.search);
+            window.location.href = `results.html?${params.toString()}`;
+        }
+
+        function stopCountdown() {
+            clearInterval(countdown);
+            countdown = null;
+            countdownEl.innerText = "";
+            isRecording = false;
+        }
+
+        startCamera();
+    </script>
+</body>
+</html> -->

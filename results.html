@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind Accordion Example</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .text-custom-color {
+            color: #099d9d;
+        }
+
+        .bg-custom-color {
+            background-color: #099d9d;
+        }
+
+        .fade-in {
+            animation: fadeIn 3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-right: 0.75rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #099d9d;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media print {
+            button { display: none; } /* Hide buttons when printing */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div id="loading" class="flex flex-col items-center">
+            <div class="spinner mb-4"></div>
+            <p class="text-xl font-bold">Executando análise dos dados...</p>
+        </div>
+        
+        <div class="w-full sm:w-8/12 mb-10 hidden" id="resultsContainer">
+            <div class="container mx-auto h-full sm:p-10">
+                <nav class="flex px-4 justify-left items-center">
+                    <div>
+                        <img src="https://image.flaticon.com/icons/svg/497/497348.svg" alt="" class="w-8">
+                    </div>
+                    <div class="text-4xl font-bold">
+                        SmartMed<span class="text-custom-color">.</span>
+                    </div>
+                </nav>
+                <header class="container px-4 lg:flex mt-10 items-center h-full lg:mt-0">
+                    <div class="w-full" id="resultsContent">
+                        <h1 class="text-3xl font-bold text-center mb-4">Resultados</h1>
+                        <div id="results" class="space-y-4"></div> 
+                        <div class="mt-6">
+                            <p class="font-semibold">Escaneie o QR Code para acessar os resultados online:</p>
+                            <div id="qrcode"></div>
+                        </div>
+                        <div class="mt-6 flex space-x-4">
+                            <button onclick="preparePrintPage()" class="bg-custom-color text-white py-2 px-4 rounded shadow">Imprimir Resultados</button>
+                            <button class="bg-custom-color text-white py-2 px-4 rounded shadow" onclick="window.location.href='index.html'">Finalizar</button>
+                        </div>
+                    </div>
+                </header>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to get query parameters from the URL
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                nome: params.get('nome'),
+                sobrenome: params.get('sobrenome'),
+                data_nascimento: params.get('data_nascimento'),
+                sexo: params.get('sexo'),
+                email: params.get('email'),
+                telefone: params.get('telefone'),
+                height: parseFloat(params.get('altura')) / 100,
+                weight: parseFloat(params.get('peso')),
+                age: new Date().getFullYear() - parseInt(params.get('data_nascimento').split('/')[2]),
+                sex: params.get('sexo'),
+                smokes: params.get('fuma') === 'Sim',
+                hypertension: params.get('hipertensao') === 'Sim',
+                respiratoryDisease: params.get('doenca_respiratoria') === 'Sim'
+            };
+        }
+
+        // Function to calculate health metrics based on user input
+        function calculateMetrics(user) {
+            const bmi = (user.weight / (user.height ** 2)).toFixed(2);
+            const bmr = user.sex === 'Masculino'
+                ? (10 * user.weight + 6.25 * user.height * 100 - 5 * user.age + 5).toFixed(2)
+                : (10 * user.weight + 6.25 * user.height * 100 - 5 * user.age - 161).toFixed(2);
+            const bodyFat = ((1.2 * bmi) + (0.23 * user.age) - (10.8 * (user.sex === 'Masculino' ? 1 : 0)) - 5.4).toFixed(2);
+
+            const heartDiseaseRisk = (user.hypertension || user.smokes) ? "Alto" : "Moderado";
+            const strokeRisk = (user.hypertension && user.smokes) ? "Muito alto" : user.hypertension ? "Alto" : "Moderado";
+            const diabetesRisk = bmi >= 30 ? "Alto" : bmi >= 25 ? "Moderado" : "Baixo";
+            const metabolicSyndromeRisk = (bmi >= 30 && user.hypertension) ? "Alto" : "Moderado";
+            const osteoporosisRisk = (user.sex === 'Feminino' && user.age >= 50) ? "Elevado" : "Normal";
+            const lungDiseaseRisk = user.respiratoryDisease || user.smokes ? "Alto" : "Baixo";
+            const lifeExpectancy = user.smokes ? "Reduzido" : user.hypertension ? "Moderado" : "Normal";
+
+            return { bmi, bmr, bodyFat, heartDiseaseRisk, strokeRisk, diabetesRisk, metabolicSyndromeRisk, osteoporosisRisk, lungDiseaseRisk, lifeExpectancy };
+        }
+
+        // Function to display results on the page
+        function displayResults() {
+            const user = getQueryParams();
+            const { bmi, bmr, bodyFat, heartDiseaseRisk, strokeRisk, diabetesRisk, metabolicSyndromeRisk, osteoporosisRisk, lungDiseaseRisk, lifeExpectancy } = calculateMetrics(user);
+
+            const results = [
+                { title: "IMC (Índice de Massa Corporal)", value: `${bmi} (${bmi < 18.5 ? "Underweight" : bmi < 25 ? "Normal" : bmi < 30 ? "Sobrepeso" : "Obesidade"})`, icon: "📊" },
+                { title: "TMB (Taxa de Metabolismo Basal)", value: `${bmr} calorias/dia`, icon: "🔥" },
+                { title: "Percentual Estimado de Gordura Corporal", value: `${bodyFat}%`, icon: "💪" },
+                { title: "Risco de Doença Cardíaca", value: heartDiseaseRisk, icon: "❤️" },
+                { title: "Risco de Acidente Vascular Cerebral (AVC)", value: strokeRisk, icon: "🧠" },
+                { title: "Risco de Diabetes", value: diabetesRisk, icon: "🍬" },
+                { title: "Risco de Síndrome Metabólica", value: metabolicSyndromeRisk, icon: "⚖️" },
+                { title: "Risco de Osteoporose", value: osteoporosisRisk, icon: "🦴" },
+                { title: "Risco de Doenças Pulmonares", value: lungDiseaseRisk, icon: "🌬️" },
+                { title: "Impacto na Expectativa de Vida", value: lifeExpectancy, icon: "⏳" }
+            ];
+
+            const resultAccordion = results.map((item, index) => `
+                <div class="border-b border-gray-200">
+                    <button class="w-full text-left p-4 bg-white hover:bg-gray-100 flex items-center justify-between focus:outline-none" onclick="toggleAccordion(${index})">
+                        <span class="flex items-center">
+                            <span class="card-icon">${item.icon}</span>
+                            <span class="font-semibold text-lg">${item.title}</span>
+                        </span>
+                        <span class="text-xl" id="accordion-icon-${index}">+</span>
+                    </button>
+                    <div id="accordion-content-${index}" class="accordion-content hidden p-4 bg-gray-50 text-xl">
+                        <p>${item.value}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById("results").innerHTML = resultAccordion;
+            document.getElementById('resultsContent').classList.remove('hidden');
+
+            // Generate QR Code linking back to results.html
+            new QRCode(document.getElementById("qrcode"), {
+                text: window.location.href,
+                width: 128,
+                height: 128
+            });
+        }
+
+        // Function to toggle accordion content
+        function toggleAccordion(index) {
+            const content = document.getElementById(`accordion-content-${index}`);
+            const icon = document.getElementById(`accordion-icon-${index}`);
+
+            // Toggle visibility
+            content.classList.toggle("hidden");
+
+            // Update icon based on visibility
+            icon.textContent = content.classList.contains("hidden") ? "+" : "-";
+        }
+
+        // Trigger result display on page load
+        setTimeout(() => {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            displayResults();
+        }, 10000); // Ensure spinner spins for 10 seconds
+
+        function preparePrintPage() {
+            const user = getQueryParams();
+            const results = calculateMetrics(user);
+
+            // Save results and user info to localStorage
+            localStorage.setItem("healthResults", JSON.stringify(results));
+            localStorage.setItem("userInfo", JSON.stringify(user));
+
+            // Redirect to print page with query parameters
+            const queryParams = new URLSearchParams(user).toString();
+            window.location.href = `print.html?${queryParams}`;
+        }
+
+        // Function to Download PDF
+        function downloadPDF() {
+            const element = document.getElementById('resultsContainer');
+            html2pdf(element, {
+                margin: 10,
+                filename: 'Relatorio_Saude.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            });
+        }
+    </script>
+</body>
+
+</html>

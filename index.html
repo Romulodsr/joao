@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind Component Example</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .text-custom-color {
+            color: #099d9d;
+        }
+        .bg-custom-color {
+            background-color: #099d9d;
+        }
+        .fade-in {
+            animation: fadeIn 3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="flex flex-wrap">
+        <div class="w-full sm:w-8/12 mb-10">
+            <div class="container mx-auto h-full sm:p-10">
+                <nav class="flex px-4 justify-between items-center">
+                    <div class="text-4xl font-bold">
+                        SmartMed<span class="text-custom-color">.</span>
+                    </div>
+                    <div>
+                        <img src="https://image.flaticon.com/icons/svg/497/497348.svg" alt="" class="w-8">
+                    </div>
+                </nav>
+                <header class="container px-4 lg:flex mt-10 items-center h-full lg:mt-0">
+                    <div class="w-full" id="initialContent">
+                        <h1 class="text-4xl lg:text-6xl font-bold">Promovemos <span class="text-custom-color">serviços medicos</span> que você pode confiar</h1>
+                        <div class="w-20 h-2 bg-custom-color my-4"></div>
+                        <p class="text-xl mb-10">Nossa tecnologia vai além do básico. Utilizamos inteligência artificial avançada para analisar, em tempo real, os sinais captados diretamente pelo seu dispositivo.</p>
+                        <button class="bg-custom-color text-white text-2xl font-medium px-4 py-2 rounded shadow" id="continueButton">Continuar</button>
+                    </div>
+                    <div class="w-full hidden" id="consentContent">
+                        <h1 class="text-4xl lg:text-6xl font-bold">Consentimento </h1>
+                        <div class="w-20 h-2 bg-custom-color my-4"></div>
+                        <p class="text-xl mb-10">Ao continuar, concordo com o processamento de meus dados de saúde para a utilização dos serviços da SmartMed e declaro estar ciente sobre o escopo deste serviço. O teste não diagnostica, trata, atenua ou previne qualquer doença ou sintoma. Consulte seu médico se você acha que pode ter um problema de saúde. O vídeo usado para medição e processamento não é armazenado em nenhuma circunstância.</p>
+                        <button class="bg-custom-color text-white text-2xl font-medium px-4 py-2 rounded shadow" id="consentContinueButton">Continuar</button>
+                    </div>
+                    <div class="w-full hidden" id="importantContent">
+                        <h1 class="text-4xl lg:text-6xl font-bold">Importante </h1>
+                        <div class="w-20 h-2 bg-custom-color my-4"></div>
+                        <p class="text-xl mb-10">O teste de bem-estar é indicado para maiores de 13 anos. Os resultados obtidos são apenas estimativas e não substituem a avaliação clínica de um profissional de saúde. A finalidade do teste é melhorar o conhecimento sobre o bem-estar geral do usuário.</p>
+                        <button class="bg-custom-color text-white text-2xl font-medium px-4 py-2 rounded shadow" id="importantContinueButton">Iniciar Teste</button>
+                    </div>
+                    
+                    <div class="w-full hidden" id="formContent">
+                        <h2 class="text-2xl font-bold mb-4">Preencha as seguintes informações</h2>
+                        <form id="initialForm" class="space-y-4">
+                            <div>
+                                <label class="block text-gray-700 font-medium">Nome</label>
+                                <input type="text" name="nome" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium">Sobrenome</label>
+                                <input type="text" name="sobrenome" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                            </div>                   
+                            <div>
+                                <label class="block text-gray-700 font-medium">Data de nascimento</label>
+                                <input type="text" name="data_nascimento" placeholder="dd/mm/yyyy" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium">Sexo</label>
+                                <select name="sexo" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                                    <option value="">Selecione uma opção</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium">E-mail</label>
+                                <input type="email" name="email" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium">Telefone</label>
+                                <input type="tel" name="telefone" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                            </div>
+                            <button type="button" class="w-full bg-custom-color text-white font-medium py-2 rounded-lg shadow hover:bg-blue-700 transition" id="formContinueButton">
+                                Continuar
+                            </button>
+                        </form>
+                    </div>
+                    <div class="w-full hidden" id="additionalQuestions">
+                         <h2 class="text-2xl font-bold mb-4">Preencha as seguintes informações</h2>
+                        <form id="additionalForm" action="results.html" method="GET" class="space-y-4">
+                            <div>
+                                <label class="block text-gray-700 font-medium">Altura (cm)</label>
+                                <input type="number" name="altura" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium">Peso (kg)</label>
+                                <input type="number" name="peso" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium">Você fuma?</label>
+                                <select name="fuma" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                                    <option value="">Selecione uma opção</option>
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não">Não</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium">Você tem hipertensão diagnosticada?</label>
+                                <select name="hipertensao" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                                    <option value="">Selecione uma opção</option>
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não">Não</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium">Você tem alguma doença respiratória?</label>
+                                <select name="doenca_respiratoria" class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" required>
+                                    <option value="">Selecione uma opção</option>
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não">Não</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="nome" id="hiddenNome">
+                            <input type="hidden" name="sobrenome" id="hiddenSobrenome">
+                            <input type="hidden" name="data_nascimento" id="hiddenDataNascimento">
+                            <input type="hidden" name="sexo" id="hiddenSexo">
+                            <input type="hidden" name="email" id="hiddenEmail">
+                            <input type="hidden" name="telefone" id="hiddenTelefone">
+                            <button type="button" class="w-full bg-custom-color text-white font-medium py-2 rounded-lg shadow hover:bg-blue-700 transition" id="additionalFormSubmitButton">
+                                Enviar
+                            </button>
+                        </form>
+                    </div>
+                    <div class="w-full hidden" id="guiaContent">
+                        <h1 class="text-4xl lg:text-6xl font-bold">Guia de utilizacao do Exame Facial</h1>
+                        <div class="w-20 h-2 bg-custom-color my-4"></div>
+                        <p class="text-xl mb-10">1 – Para começar, escolha um local bem iluminado e permaneça sentado.  
+                            <br><br>
+                            2 – Apoie o telefone em uma mesa ou em um suporte para evitar movimentos. Considerando que movimentos podem afetar os resultados, evite movimentar o dispositivo durante a realização do teste.  
+                            <br><br>
+                            3 – Assegure-se de que seu rosto esteja iluminado por completo, sem luzes de fundo ou objetos que cubram o seu rosto.  
+                            <br><br>
+                            4 – Você deve manter o rosto centralizado na área indicada durante todo o teste, evitando se movimentar.  
+                            <br><br>
+                            Para obter melhores resultados, você poderá utilizar um suporte e iluminação de selfie para assegurar que terá uma iluminação uniforme em todo o rosto.  
+                            <br><br>
+                            O teste não funcionará bem se:  
+                            <br><br>
+                            A luz de fundo estiver muito forte ou escura. Neste caso, você deverá tentar mudar de posição para aumentar a iluminação em seu rosto.  
+                            <br><br>
+                            Houver objetos cobrindo a maior parte do rosto, como óculos escuros ou gorros.  
+                            <br><br>
+                            O rosto não estiver direcionado para a câmera, ou ainda se estiver muito perto ou longe da câmera.  </p>
+                       <button class="bg-custom-color text-white text-2xl font-medium px-4 py-2 rounded shadow" id="startExamButton">Iniciar o Exame Facial</button>
+                    </div>
+                </header>
+            </div>
+        </div>
+        <img src="background.jpg" alt="Leafs" class="w-full h-48 object-cover sm:h-screen sm:w-4/12">
+    </div>
+    <script>
+        document.getElementById('continueButton').addEventListener('click', function() {
+            const initialContent = document.getElementById('initialContent');
+            const consentContent = document.getElementById('consentContent');
+            initialContent.classList.add('hidden');
+            consentContent.classList.remove('hidden');
+            consentContent.classList.add('fade-in');
+        });
+
+        document.getElementById('consentContinueButton').addEventListener('click', function() {
+            const consentContent = document.getElementById('consentContent');
+            const importantContent = document.getElementById('importantContent');
+            consentContent.classList.add('hidden');
+            importantContent.classList.remove('hidden');
+            importantContent.classList.add('fade-in');
+        });
+
+        document.getElementById('importantContinueButton').addEventListener('click', function() {
+            const importantContent = document.getElementById('importantContent');
+            const formContent = document.getElementById('formContent');
+            importantContent.classList.add('hidden');
+            formContent.classList.remove('hidden');
+            formContent.classList.add('fade-in');
+        });
+
+        document.getElementById('startExamButton').addEventListener('click', function() {
+            window.location.href = "face_recognition.html";
+        });
+
+        document.getElementById('formContinueButton').addEventListener('click', function() {
+            const formContent = document.getElementById('formContent');
+            const additionalQuestions = document.getElementById('additionalQuestions');
+            const initialForm = document.getElementById('initialForm');
+            const hiddenNome = document.getElementById('hiddenNome');
+            const hiddenSobrenome = document.getElementById('hiddenSobrenome');
+            const hiddenDataNascimento = document.getElementById('hiddenDataNascimento');
+            const hiddenSexo = document.getElementById('hiddenSexo');
+            const hiddenEmail = document.getElementById('hiddenEmail');
+            const hiddenTelefone = document.getElementById('hiddenTelefone');
+
+            hiddenNome.value = initialForm.nome.value;
+            hiddenSobrenome.value = initialForm.sobrenome.value;
+            hiddenDataNascimento.value = initialForm.data_nascimento.value;
+            hiddenSexo.value = initialForm.sexo.value;
+            hiddenEmail.value = initialForm.email.value;
+            hiddenTelefone.value = initialForm.telefone.value;
+
+            formContent.classList.add('hidden');
+            additionalQuestions.classList.remove('hidden');
+            additionalQuestions.classList.add('fade-in');
+        });
+
+        document.getElementById('additionalFormSubmitButton').addEventListener('click', function() {
+            const additionalQuestions = document.getElementById('additionalQuestions');
+            const guiaContent = document.getElementById('guiaContent');
+            additionalQuestions.classList.add('hidden');
+            guiaContent.classList.remove('hidden');
+            guiaContent.classList.add('fade-in');
+        });
+
+        document.getElementById('startExamButton').addEventListener('click', function() {
+            const additionalForm = document.getElementById('additionalForm');
+            const formData = new FormData(additionalForm);
+            const queryString = new URLSearchParams(formData).toString();
+            window.location.href = `face_recognition.html?${queryString}`;
+        });
+    </script>
+</body>
+</html>

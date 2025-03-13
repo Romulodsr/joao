@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imprimir Resultados</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @media print {
+            button { display: none; } /* Hide buttons when printing */
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div id="report" class="max-w-2xl mx-auto bg-white p-6 shadow-md rounded">
+        <h1 class="text-3xl font-bold mb-4">SmartMed - Relatório de Saúde</h1>
+        <p id="datetime" class="mb-4"></p>
+        <p id="userInfo" class="mb-6"></p>
+        <div id="results"></div>
+
+        <!-- QR Code -->
+        <div class="mt-6">
+            <p class="font-semibold">Escaneie o QR Code para acessar os resultados online:</p>
+            <div id="qrcode"></div>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-6 flex space-x-4">
+        <button onclick="window.print()" class="bg-blue-500 text-white py-2 px-4 rounded">Baixar PDF</button>
+    </div>
+
+    <script>
+        const results = JSON.parse(localStorage.getItem("healthResults")) || {};
+        const user = JSON.parse(localStorage.getItem("userInfo")) || {};
+
+        console.log("Loaded User Info:", user);
+
+        document.getElementById("datetime").textContent = 
+            "Data e Hora: " + new Date().toLocaleString();
+
+        document.getElementById("userInfo").innerHTML = `
+            <strong>Nome:</strong> ${user.nome ? user.nome : "N/A"} ${user.sobrenome ? user.sobrenome : ""}<br>
+            <strong>Altura:</strong> ${user.height ? user.height * 100 + " cm" : "N/A"}<br>
+            <strong>Peso:</strong> ${user.weight ? user.weight + " kg" : "N/A"}<br>
+            <strong>Idade:</strong> ${user.age ? user.age + " anos" : "N/A"}<br>
+            <strong>Sexo:</strong> ${user.sex ? user.sex : "N/A"}<br>
+            <strong>Fuma?</strong> ${user.smokes ? "Sim" : "Não"}<br>
+            <strong>Hipertensão?</strong> ${user.hypertension ? "Sim" : "Não"}<br>
+            <strong>Doença Respiratória?</strong> ${user.respiratoryDisease ? "Sim" : "Não"}
+        `;
+
+        document.getElementById("results").innerHTML = `
+            <p><strong>IMC:</strong> ${results.bmi}</p>
+            <p><strong>Taxa Metabólica Basal:</strong> ${results.bmr} calorias/dia</p>
+            <p><strong>Risco de Doença Cardíaca:</strong> ${results.heartDiseaseRisk}</p>
+        `;
+
+        new QRCode(document.getElementById("qrcode"), {
+            text: window.location.origin + "/results.html",
+            width: 128,
+            height: 128
+        });
+
+        function downloadPDF() {
+            const element = document.getElementById('report');
+            html2pdf().from(element).save('Relatorio_Saude.pdf');
+        }
+    </script>
+</body>
+</html>
