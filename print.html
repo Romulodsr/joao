@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @media print {
-            button { display: none; } /* Hide buttons when printing */
+            button { display: none; } /* Oculta botões ao imprimir */
         }
     </style>
 </head>
@@ -27,26 +27,23 @@
         </div>
     </div>
 
-    <!-- Buttons -->
+    <!-- Botão para baixar PDF -->
     <div class="mt-6 flex space-x-4">
-        <button onclick="window.print()" class="bg-blue-500 text-white py-2 px-4 rounded">Baixar PDF</button>
+        <button onclick="downloadPDF()" class="bg-blue-500 text-white py-2 px-4 rounded">Baixar PDF</button>
     </div>
 
     <script>
         const results = JSON.parse(localStorage.getItem("healthResults")) || {};
         const user = JSON.parse(localStorage.getItem("userInfo")) || {};
 
-        console.log("Loaded User Info:", user);
-
-        document.getElementById("datetime").textContent = 
-            "Data e Hora: " + new Date().toLocaleString();
+        document.getElementById("datetime").textContent = "Data e Hora: " + new Date().toLocaleString();
 
         document.getElementById("userInfo").innerHTML = `
-            <strong>Nome:</strong> ${user.nome ? user.nome : "N/A"} ${user.sobrenome ? user.sobrenome : ""}<br>
+            <strong>Nome:</strong> ${user.nome || "N/A"} ${user.sobrenome || ""}<br>
             <strong>Altura:</strong> ${user.height ? user.height * 100 + " cm" : "N/A"}<br>
             <strong>Peso:</strong> ${user.weight ? user.weight + " kg" : "N/A"}<br>
             <strong>Idade:</strong> ${user.age ? user.age + " anos" : "N/A"}<br>
-            <strong>Sexo:</strong> ${user.sex ? user.sex : "N/A"}<br>
+            <strong>Sexo:</strong> ${user.sex || "N/A"}<br>
             <strong>Fuma?</strong> ${user.smokes ? "Sim" : "Não"}<br>
             <strong>Hipertensão?</strong> ${user.hypertension ? "Sim" : "Não"}<br>
             <strong>Doença Respiratória?</strong> ${user.respiratoryDisease ? "Sim" : "Não"}
@@ -55,7 +52,14 @@
         document.getElementById("results").innerHTML = `
             <p><strong>IMC:</strong> ${results.bmi}</p>
             <p><strong>Taxa Metabólica Basal:</strong> ${results.bmr} calorias/dia</p>
+            <p><strong>Percentual de Gordura Corporal:</strong> ${results.bodyFat}%</p>
             <p><strong>Risco de Doença Cardíaca:</strong> ${results.heartDiseaseRisk}</p>
+            <p><strong>Risco de AVC:</strong> ${results.strokeRisk}</p>
+            <p><strong>Risco de Diabetes:</strong> ${results.diabetesRisk}</p>
+            <p><strong>Risco de Síndrome Metabólica:</strong> ${results.metabolicSyndromeRisk}</p>
+            <p><strong>Risco de Osteoporose:</strong> ${results.osteoporosisRisk}</p>
+            <p><strong>Risco de Doenças Pulmonares:</strong> ${results.lungDiseaseRisk}</p>
+            <p><strong>Impacto na Expectativa de Vida:</strong> ${results.lifeExpectancy}</p>
         `;
 
         new QRCode(document.getElementById("qrcode"), {
