@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,7 +67,7 @@
             <div class="container mx-auto h-full sm:p-10">
                 <nav class="flex px-4 justify-left items-center">
                     <div>
-<!--                         <img src="https://image.flaticon.com/icons/svg/497/497348.svg" alt="" class="w-8"> -->
+                        <img src="https://image.flaticon.com/icons/svg/497/497348.svg" alt="" class="w-8">
                     </div>
                     <div class="text-4xl font-bold">
                         SmartMed<span class="text-custom-color">.</span>
@@ -133,30 +136,61 @@
             const user = getQueryParams();
             const { bmi, bmr, bodyFat, heartDiseaseRisk, strokeRisk, diabetesRisk, metabolicSyndromeRisk, osteoporosisRisk, lungDiseaseRisk, lifeExpectancy } = calculateMetrics(user);
 
+            // Define messages based on risk level
+            const resultMessages = {
+                bmi: bmi < 18.5 ? "Seu IMC está abaixo do ideal. Consulte um nutricionista para melhorar sua alimentação." :
+                     bmi >= 30 ? "Seu IMC indica obesidade. É recomendado procurar um nutricionista e praticar atividades físicas regularmente." :
+                     "Seu IMC está dentro da faixa ideal. Continue mantendo um estilo de vida saudável!",
+
+                heartDiseaseRisk: heartDiseaseRisk === "Alto" ? "Seu risco de doença cardíaca é elevado. Recomendamos uma avaliação com um cardiologista." :
+                                  "Seu risco cardíaco está dentro do normal. Continue praticando exercícios regularmente!",
+
+                strokeRisk: strokeRisk === "Muito alto" ? "Seu risco de AVC é muito alto. Consulte um médico imediatamente para controle da pressão e hábitos saudáveis." :
+                            strokeRisk === "Alto" ? "Seu risco de AVC está elevado. Monitore sua pressão arterial e consulte um especialista." :
+                            "Seu risco de AVC é baixo. Continue com bons hábitos alimentares e pratique exercícios!",
+
+                diabetesRisk: diabetesRisk === "Alto" ? "Você tem um risco elevado de diabetes. Consulte um endocrinologista e controle sua alimentação." :
+                              "Seu risco de diabetes é baixo. Mantenha um estilo de vida equilibrado!",
+
+                metabolicSyndromeRisk: metabolicSyndromeRisk === "Alto" ? "Há sinais de síndrome metabólica. Busque acompanhamento médico para ajustes na alimentação e exercícios." :
+                                       "Você não apresenta sinais preocupantes de síndrome metabólica. Continue com bons hábitos!",
+
+                osteoporosisRisk: osteoporosisRisk === "Elevado" ? "Seu risco de osteoporose é alto. Consulte um ortopedista e avalie a necessidade de suplementação de cálcio e vitamina D." :
+                                  "Seus ossos estão saudáveis! Mantenha a ingestão de cálcio e pratique exercícios!",
+
+                lungDiseaseRisk: lungDiseaseRisk === "Alto" ? "Seu risco de doenças pulmonares é elevado. Se você fuma, considere procurar ajuda para parar e consulte um pneumologista." :
+                                 "Sua saúde pulmonar está em boas condições. Continue evitando tabagismo e ambientes poluídos!",
+
+                lifeExpectancy: lifeExpectancy === "Reduzido" ? "Seus hábitos podem estar reduzindo sua expectativa de vida. Faça exames regulares e adote um estilo de vida mais saudável." :
+                                "Sua expectativa de vida está dentro do normal. Continue cuidando bem da sua saúde!"
+            };
+
+            // Define the accordion content
             const results = [
-                { title: "IMC (Índice de Massa Corporal)", value: `${bmi} (${bmi < 18.5 ? "Underweight" : bmi < 25 ? "Normal" : bmi < 30 ? "Sobrepeso" : "Obesidade"})`, icon: "📊" },
-                { title: "TMB (Taxa de Metabolismo Basal)", value: `${bmr} calorias/dia`, icon: "🔥" },
-                { title: "Percentual Estimado de Gordura Corporal", value: `${bodyFat}%`, icon: "💪" },
-                { title: "Risco de Doença Cardíaca", value: heartDiseaseRisk, icon: "❤️" },
-                { title: "Risco de Acidente Vascular Cerebral (AVC)", value: strokeRisk, icon: "🧠" },
-                { title: "Risco de Diabetes", value: diabetesRisk, icon: "🍬" },
-                { title: "Risco de Síndrome Metabólica", value: metabolicSyndromeRisk, icon: "⚖️" },
-                { title: "Risco de Osteoporose", value: osteoporosisRisk, icon: "🦴" },
-                { title: "Risco de Doenças Pulmonares", value: lungDiseaseRisk, icon: "🌬️" },
-                { title: "Impacto na Expectativa de Vida", value: lifeExpectancy, icon: "⏳" }
+                { title: "IMC (Índice de Massa Corporal)", value: `${bmi}`, icon: "📊", message: resultMessages.bmi },
+                { title: "TMB (Taxa de Metabolismo Basal)", value: `${bmr} calorias/dia`, icon: "🔥", message: "Seu metabolismo está funcionando normalmente!" },
+                { title: "Percentual de Gordura Corporal", value: `${bodyFat}%`, icon: "💪", message: "Seu percentual de gordura está dentro do esperado para sua idade e sexo!" },
+                { title: "Risco de Doença Cardíaca", value: heartDiseaseRisk, icon: "❤️", message: resultMessages.heartDiseaseRisk },
+                { title: "Risco de AVC", value: strokeRisk, icon: "🧠", message: resultMessages.strokeRisk },
+                { title: "Risco de Diabetes", value: diabetesRisk, icon: "🍬", message: resultMessages.diabetesRisk },
+                { title: "Risco de Síndrome Metabólica", value: metabolicSyndromeRisk, icon: "⚖️", message: resultMessages.metabolicSyndromeRisk },
+                { title: "Risco de Osteoporose", value: osteoporosisRisk, icon: "🦴", message: resultMessages.osteoporosisRisk },
+                { title: "Risco de Doenças Pulmonares", value: lungDiseaseRisk, icon: "🌬️", message: resultMessages.lungDiseaseRisk },
+                { title: "Impacto na Expectativa de Vida", value: lifeExpectancy, icon: "⏳", message: resultMessages.lifeExpectancy }
             ];
 
+            // Generate the accordion HTML
             const resultAccordion = results.map((item, index) => `
                 <div class="border-b border-gray-200">
                     <button class="w-full text-left p-4 bg-white hover:bg-gray-100 flex items-center justify-between focus:outline-none" onclick="toggleAccordion(${index})">
                         <span class="flex items-center">
                             <span class="card-icon">${item.icon}</span>
-                            <span class="font-semibold text-lg">${item.title}</span>
+                            <span class="font-semibold text-lg">${item.title}: ${item.value}</span>
                         </span>
-                        <span class="text-xl" id="accordion-icon-${index}">Mais detalhes</span>
+                        <span class="text-xl font-bold" id="accordion-icon-${index}" style="font-size: 12px;">Mais detalhes</span>
                     </button>
-                    <div id="accordion-content-${index}" class="accordion-content hidden p-4 bg-gray-50 text-xl">
-                        <p>${item.value}</p>
+                    <div id="accordion-content-${index}" class="accordion-content hidden p-4 bg-gray-50 text-lg">
+                        <p><strong>-</strong> ${item.message}</p>
                     </div>
                 </div>
             `).join('');
@@ -181,8 +215,8 @@
             content.classList.toggle("hidden");
 
             // Update icon based on visibility
-            icon.textContent = content.classList.contains("hidden") ? "Mais detalhes" : "⬆ Ocultar detalhes";
-icon.style.fontSize = "8px"; // Set font size to 8px
+            icon.textContent = content.classList.contains("hidden") ? "Mais detalhes" : "Ocultar detalhes";
+            icon.style.fontSize = "12px"; // Set icon font size to 8px
         }
 
         // Trigger result display on page load
