@@ -20,7 +20,5 @@ This is a simple HTML template to display health examination results. It include
 To use the template, pass the following parameters in the URL:
 
 ```
-index.html?nome=John+Doe&dataNascimento=1980-01-01&sexo=Male&altura=180&peso=75&hipertensao=sim&fuma=nao
-```
 
 
