@@ -14,11 +14,3 @@ This is a simple HTML template to display health examination results. It include
 1. Clone the repository.
 2. Open `index.html` in a web browser.
 3. Pass the required parameters in the URL to populate the fields.
-
-## Example
-
-To use the template, pass the following parameters in the URL:
-
-```
-
-
